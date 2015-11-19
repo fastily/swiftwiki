@@ -36,11 +36,6 @@ public class CookieManager
         {
             base[domain]![cookie.name] = cookie.value
         }
-        /*
-        if(Settings.debug)
-        {
-            print("COOKIEJAR CONTAINS::: -> \(base)")
-        }*/
     }
     
     /**

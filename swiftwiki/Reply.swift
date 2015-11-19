@@ -34,16 +34,34 @@ public class Reply
         }
     }
     
+    /**
+     Takes a JSONObject from the server
+     - parameters:
+        - _: The serialized JSON object returned from the server.
+     
+    */
     private init(_ base : [String : AnyObject])
     {
         self.base = base
     }
     
+    /**
+     Gets the value associated with a key in a JSONObject
+     - parameters:
+        - key: The key to search for
+     - returns: The value, or nil if there is no value for the specified key
+    */
     private func get(key : String) -> AnyObject?
     {
         return base[key]
     }
     
+    /**
+     Gets the JSONObject associated with a key
+     - parameters:
+        - key: The key to search for
+     - returns: The JSONObject, or nil if there is no value for the specified key
+    */
     internal func getJSONObject(key : String) -> Reply?
     {
         if let x = base[key], y = x as? [String :AnyObject]
@@ -53,6 +71,12 @@ public class Reply
         return nil
     }
     
+    /**
+     Gets the String associated with a key
+     - parameters:
+        - key: The key to search for
+     - returns: The String, or nil if there was no value for the specified key
+    */
     internal func getString(key : String) -> String?
     {
         if let x = base[key], y = x as? String
@@ -62,9 +86,14 @@ public class Reply
         return nil
     }
     
+    /**
+     Checks if the given key exists (top level) in the JSONObject
+     - parameters:
+        - key: The key to search for
+     - returns: True if we found a given key in this JSONObject
+    */
     internal func has(key : String) -> Bool
     {
         return self.get(key) != nil
     }
-    
 }

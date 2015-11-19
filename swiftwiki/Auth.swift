@@ -23,11 +23,11 @@ internal class Auth
     private class func login(wiki : Wiki) -> Bool
     {
         let ub = URLBuilder(wiki.upx.2, action: "login")
-        var dx = [("lgname", wiki.upx.0)]
+        var dx = ["lgname", wiki.upx.0]
         
         var serverreply = Req.post(ub.makeURL(), cookiejar: wiki.cookiejar, contenttype: nil, text: URLBuilder.chainParams(dx))
         
-        dx += [("lgpassword", wiki.upx.1), ("lgtoken", serverreply.getJSONObject("login")?.getString("token")! ?? "")]
+        dx += ["lgpassword", wiki.upx.1, "lgtoken", serverreply.getJSONObject("login")?.getString("token")! ?? ""]
         serverreply = Req.post(ub.makeURL(), cookiejar : wiki.cookiejar, contenttype: nil, text: URLBuilder.chainParams(dx))
         
         return !serverreply.hasError

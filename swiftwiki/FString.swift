@@ -31,20 +31,20 @@ public class FString
     }
     
     /**
-     URLEncodes multiple Strings in Tuples at once.
+     URLEncodes a list of Strings
      - parameters:
         - items: The Strings to encode
-     - returns: The list of tuples with URL-encoded strings
+     - returns: The list of encoded Strings, in the same order they were passed in.
     */
-    public class func massEnc(items: [(String, String)]) -> [(String, String)]
+    public class func massEnc(items: String...) -> [String]
     {
-        var x = [(String, String)]()
+        var x = [String]()
         for item in items
         {
-            x.append((FString.enc(item.0), FString.enc(item.1)))
+            x.append(FString.enc(item))
         }
         
-        print(x)
+        //print(x)
         return x
     }
 }

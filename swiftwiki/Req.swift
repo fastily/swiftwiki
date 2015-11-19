@@ -26,13 +26,27 @@ public class Req
         
     }
     
-    
+    /**
+     Convinience method to grab cookies from a server reply.
+     - parameters:
+        - response: The reply from the server
+        - url: The URL the reply was recieved from
+        - cookiejar: The cookiejar to apply (if applicable) new cookies to
+    */
     private class func grabCookies(response : NSHTTPURLResponse, url : NSURL, cookiejar : CookieManager)
     {
         cookiejar.add(url.host!, cookies: NSHTTPCookie.cookiesWithResponseHeaderFields((response.allHeaderFields as? [String : String])!, forURL: response.URL!))
     }
     
     
+    /**
+     Creates a basic URLRequest template.  Sets HTML headers and applicable cookies.
+     - parameters:
+        - url: The URL to make a request to
+        - cookiejar: The cookiejar to use.  Optional, set nil to disable
+     - returns: An NSMUtableRequest with the specified parameters.
+    
+    */
     private class func makeGenericURLRequest(url : NSURL, cookiejar : CookieManager?) -> NSMutableURLRequest
     {
         let c = NSMutableURLRequest(URL: url)
@@ -47,7 +61,14 @@ public class Req
         return c
     }
     
-    
+    /**
+     Creates a basic POST request template
+     - parameters:
+        - url: the URL to POST
+        - cookiejar: The cookiejar to use.  Optional, set nil to disable
+        - contenttype: The contenttype header to use, set nil to disable
+     - returns: An NSMUtableRequest with the specified parameters.
+    */
     private class func makePost(url : NSURL, cookiejar : CookieManager?, contenttype : String?) -> NSMutableURLRequest
     {
         let c = Req.makeGenericURLRequest(url, cookiejar: cookiejar)
@@ -61,7 +82,15 @@ public class Req
         return c
     }
     
-    
+    /**
+     Attempts to do a generic POST to a URL
+     - parameters:
+        - url: The URL to POST
+        - cookiejar: The cookiejar to use.  Optional, set nil to disable
+        - contenttype: The contenttype header to use, set nil to disable
+        - text: The text to post
+     - returns The reply from the server, or nil if something went wrong.
+    */
     public class func genericPOST(url : NSURL, cookiejar : CookieManager?, contenttype : String?, text : String) -> NSData?
     {
         let c = Req.makePost(url, cookiejar: cookiejar, contenttype: contenttype)
@@ -86,11 +115,26 @@ public class Req
         return Reply(Req.genericPOST(url, cookiejar: cookiejar, contenttype: contenttype, text: text))
     }
     
+    /**
+     Performs a generic GET request on a URL
+     - parameters:
+        - url: The URL to GET
+        - cookiejar: The cookiejar to use.  Optional, set nil to disable
+     - returns: NSData from the server, or nil if something went wrong
+    */
     public class func genericGET(url : NSURL, cookiejar : CookieManager?) -> NSData?
     {
         return Req.doReq(Req.makeGenericURLRequest(url, cookiejar: cookiejar), cookiejar: cookiejar)
     }
     
+    /**
+     Performs a GET request to a Wiki
+     
+     - parameters:
+        - url: The URL to GET
+        - cookiejar: The cookiejar to use
+     - returns: A Reply from the server.
+    */
     internal class func get(url : NSURL, cookiejar: CookieManager) -> Reply
     {
         return Reply(Req.genericGET(url, cookiejar: cookiejar))
@@ -110,9 +154,6 @@ public class Req
         var reply : NSData?
         NSURLSession.sharedSession().dataTaskWithRequest(req, completionHandler: { data, response, error in
             
-            //let cookies = NSHTTPCookie.cookiesWithResponseHeaderFields(((response as? NSHTTPURLResponse)?.allHeaderFields as? [String : String])!, forURL: response!.URL!)
-            //NSHTTPCookieStorage.sharedHTTPCookieStorage().setCookies(cookies, forURL: response!.URL!, mainDocumentURL: nil)
-            
             if cookiejar != nil
             {
                 Req.grabCookies(response as! NSHTTPURLResponse, url: req.URL!, cookiejar: cookiejar!)
@@ -127,9 +168,6 @@ public class Req
         
         return reply
     }
-    
-    
 }
 
 //x = String(data: data!, encoding: NSUTF8StringEncoding)!
-//TODO: Move away from NSURLSession.sharedSession()

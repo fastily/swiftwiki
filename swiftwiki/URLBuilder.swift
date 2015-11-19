@@ -52,30 +52,32 @@ public class URLBuilder
     */
     internal func makeURL() -> NSURL
     {
-        var x = [(String, String)]()
+        var x = [String]()
         
         for (k, v) in pl
         {
-            x.append((k, v))
+            x.append(k)
+            x.append(v)
         }
         
         return NSURL(string: base + URLBuilder.chainParams(x))!
     }
     
     /**
-      Chains parameters for use in a URL. Pass in parameters as tuples. For example, `[("title", "foo"), ("cmcontinue", "derp")]` results in "`&title=foo&cmcontinue=derp`"
+      Chains parameters for use in a URL. For example, `["title", "foo", "cmcontinue", "derp"]` results in "`&title=foo&cmcontinue=derp`"
       
      - parameters:
         - params: The array of parameters to chain.
      - returns: The chained properties as a String.
     */
-    internal class func chainParams(params : [(String, String)]) -> String
+    internal class func chainParams(params : [String]) -> String
     {
         var x = ""
         
-        for p in params
+        //print(params)
+        for var i = 0; i < params.count; i+=2
         {
-            x += "&\(p.0)=\(p.1)"
+            x += "&\(params[i])=\(params[i+1])"
         }
         
         return x
