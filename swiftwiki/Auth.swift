@@ -27,7 +27,9 @@ internal class Auth
         
         var serverreply = Req.post(ub.makeURL(), cookiejar: wiki.cookiejar, contenttype: nil, text: URLBuilder.chainParams(dx))
         
-        dx += ["lgpassword", wiki.upx.1, "lgtoken", serverreply.getJSONObject("login")?.getString("token")! ?? ""]
+        // serverreply.getJSONObject("login")?.getString("token")! ?? ""
+        
+        dx += ["lgpassword", wiki.upx.1, "lgtoken", serverreply.getStringR("token")! ?? ""]
         serverreply = Req.post(ub.makeURL(), cookiejar : wiki.cookiejar, contenttype: nil, text: URLBuilder.chainParams(dx))
         
         return !serverreply.hasError
@@ -44,9 +46,11 @@ internal class Auth
     {
         let r = Req.get(wiki.makeUB("query", params: ("meta", "tokens"), ("type", "csrf")).makeURL(), cookiejar: wiki.cookiejar)
         
-        if let x = r.getJSONObject("query")?.getJSONObject("tokens")?.getString("csrftoken")
+        // if let x = r.getJSONObject("query")?.getJSONObject("tokens")?.getString("csrftoken")
+        if let x = r.getStringR("csrftoken")
         {
             wiki.token = x
+            //print("Token successfully set! ------------>>>>>>>>>>>><<<><><><><")
         }
         
         return true
