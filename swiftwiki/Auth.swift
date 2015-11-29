@@ -22,17 +22,18 @@ internal class Auth
     */
     private class func login(wiki : Wiki) -> Bool
     {
-        let ub = URLBuilder(wiki.upx.2, action: "login")
+        let ub = wiki.makeUB("login")
+        
         var dx = ["lgname", wiki.upx.0]
+        let r = Req.post(ub.makeURL(), cookiejar: wiki.cookiejar, contenttype: nil, text: URLBuilder.chainParams(dx))
         
-        var serverreply = Req.post(ub.makeURL(), cookiejar: wiki.cookiejar, contenttype: nil, text: URLBuilder.chainParams(dx))
+        if r.hasError() || !r.resultIs("NeedToken")
+        {
+            return false;
+        }
         
-        // serverreply.getJSONObject("login")?.getString("token")! ?? ""
-        
-        dx += ["lgpassword", wiki.upx.1, "lgtoken", serverreply.getStringR("token")! ?? ""]
-        serverreply = Req.post(ub.makeURL(), cookiejar : wiki.cookiejar, contenttype: nil, text: URLBuilder.chainParams(dx))
-        
-        return !serverreply.hasError
+        dx += ["lgpassword", wiki.upx.1, "lgtoken", r.getStringR("token")!]
+        return Req.post(ub.makeURL(), cookiejar : wiki.cookiejar, contenttype: nil, text: URLBuilder.chainParams(dx)).resultIs("Success")
     }
     
     /**
@@ -44,16 +45,14 @@ internal class Auth
     */
     private class func doSetup(wiki : Wiki) -> Bool
     {
-        let r = Req.get(wiki.makeUB("query", params: ("meta", "tokens"), ("type", "csrf")).makeURL(), cookiejar: wiki.cookiejar)
+        let r = Req.get(wiki.makeUB("query", params: "meta", "tokens", "type", "csrf").makeURL(), cookiejar: wiki.cookiejar)
         
-        // if let x = r.getJSONObject("query")?.getJSONObject("tokens")?.getString("csrftoken")
         if let x = r.getStringR("csrftoken")
         {
             wiki.token = x
-            //print("Token successfully set! ------------>>>>>>>>>>>><<<><><><><")
         }
         
-        return true
+        return wiki.token != "+\\"
     }
     
     /**

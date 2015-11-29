@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		7099C9131C07B82700135B09 /* Revision.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7099C9121C07B82700135B09 /* Revision.swift */; };
+		7099C9151C07B97200135B09 /* DataEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7099C9141C07B97200135B09 /* DataEntry.swift */; };
 		70CFCB531BF7F92000E89492 /* swiftwiki.h in Headers */ = {isa = PBXBuildFile; fileRef = 70CFCB521BF7F92000E89492 /* swiftwiki.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		70CFCB5A1BF7F92000E89492 /* swiftwiki.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 70CFCB4F1BF7F92000E89492 /* swiftwiki.framework */; };
 		70CFCB721BF7F9C900E89492 /* Auth.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70CFCB691BF7F9C900E89492 /* Auth.swift */; };
@@ -31,6 +33,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		7099C9121C07B82700135B09 /* Revision.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Revision.swift; sourceTree = "<group>"; };
+		7099C9141C07B97200135B09 /* DataEntry.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DataEntry.swift; sourceTree = "<group>"; };
 		70CFCB4F1BF7F92000E89492 /* swiftwiki.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = swiftwiki.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		70CFCB521BF7F92000E89492 /* swiftwiki.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = swiftwiki.h; sourceTree = "<group>"; };
 		70CFCB541BF7F92000E89492 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -97,6 +101,8 @@
 				70CFCB711BF7F9C900E89492 /* Wiki.swift */,
 				70CFCB521BF7F92000E89492 /* swiftwiki.h */,
 				70CFCB541BF7F92000E89492 /* Info.plist */,
+				7099C9121C07B82700135B09 /* Revision.swift */,
+				7099C9141C07B97200135B09 /* DataEntry.swift */,
 			);
 			path = swiftwiki;
 			sourceTree = "<group>";
@@ -219,9 +225,11 @@
 			files = (
 				70CFCB721BF7F9C900E89492 /* Auth.swift in Sources */,
 				70CFCB761BF7F9C900E89492 /* Reply.swift in Sources */,
+				7099C9131C07B82700135B09 /* Revision.swift in Sources */,
 				70CFCB7A1BF7F9C900E89492 /* Wiki.swift in Sources */,
 				70CFCB771BF7F9C900E89492 /* Req.swift in Sources */,
 				70CFCB731BF7F9C900E89492 /* CookieManager.swift in Sources */,
+				7099C9151C07B97200135B09 /* DataEntry.swift in Sources */,
 				70CFCB781BF7F9C900E89492 /* Settings.swift in Sources */,
 				70CFCB791BF7F9C900E89492 /* URLBuilder.swift in Sources */,
 				70CFCB741BF7F9C900E89492 /* FString.swift in Sources */,

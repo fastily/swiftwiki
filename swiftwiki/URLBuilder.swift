@@ -35,13 +35,13 @@ public class URLBuilder
      Sets the params of this object. Note that subsequent calls of this method will not overwrite keys-value pairs that are not named in the passed in parameters.
      
      - parameters:
-        - params: The parameters, (key,value) to set object's state with.
+        - params: The parameters, [key1, value1, key2, value2,...] to set object's state with.  PRECONDITION: params *must* contain an even number of elements
     */
-    internal func setParams(params : [(String, String)]) -> Void
+    internal func setParams(params : [String]) -> Void
     {
-        for p in params
+        for var i = 0; i < params.count; i+=2
         {
-            pl[p.0] = p.1
+            pl[params[i]] = params[i+1]
         }
     }
     

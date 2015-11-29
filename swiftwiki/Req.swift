@@ -154,9 +154,9 @@ public class Req
         var reply : NSData?
         NSURLSession.sharedSession().dataTaskWithRequest(req, completionHandler: { data, response, error in
             
-            if cookiejar != nil
+            if let cjar = cookiejar
             {
-                Req.grabCookies(response as! NSHTTPURLResponse, url: req.URL!, cookiejar: cookiejar!)
+                Req.grabCookies(response as! NSHTTPURLResponse, url: req.URL!, cookiejar: cjar)
             }
             
             reply = data

@@ -8,14 +8,24 @@ import Foundation
 public class Reply
 {
     /**
+     Result strings which should not be tagged as errors.
+    */
+    private static let whitelist = ["NeedToken", "Success", "Continue"]
+    
+    /**
      The JSONObject backing this Reply wrapper
     */
     private var base = [String : AnyObject]()
     
     /**
-     Internal flag indicating if we found any preliminary errors.
+     The result param of the query/action, if one was returned by the server.
     */
-    internal var hasError = false
+    private var result : String?
+    
+    /**
+     The error code returned by the server, if one was returned.
+    */
+    private var errcode: String?
     
     /**
      Initializer, takes and interprets a JSON reply from the server.
@@ -26,10 +36,19 @@ public class Reply
         {
             base = x
             
-            if self.has("error")
+            result = getStringR("result")
+            
+            if has("error")
             {
-                hasError = true
+                errcode = getStringR("code")
+                print("[ ERROR ]: \(getJSONObjectR("error")?.base)")
             }
+            else if result != nil && !Reply.whitelist.contains(result!)
+            {
+                errcode = result;
+                print("[ ERROR ]: RESULT = \(base)")
+            }
+            
             if Settings.debug
             {
                 print(base)
@@ -79,6 +98,22 @@ public class Reply
     }
     
     /**
+     Gets the JSONArray associated with a key
+     - parameters:
+        - key: The key to search for
+     - returns: The JSONARray, or nil if there was no value for the specified key
+    */
+    internal func getJSONArray(key : String) -> [AnyObject]?
+    {
+        if let x = base[key], y = x as? [AnyObject]
+        {
+            return y
+        }
+        return nil
+    }
+    
+    
+    /**
      Checks if the given key exists (top level) in the JSONObject
      - parameters:
         - key: The key to search for
@@ -98,26 +133,18 @@ public class Reply
     */
     private class func getR(jo : Reply?, key : String) -> AnyObject?
     {
-        
         if jo == nil //base case
         {
             return nil
         }
-        
-        /*if jo!.has(key) // simple case
-        {
-            return jo!.base[key]
-        }*/
-        
-        if let v = jo!.base[key] // simple case
+        else if let v = jo!.base[key] // simple case
         {
             return v
         }
         
         for k in jo!.base.keys //recurse
         {
-            let x = Reply.getR(jo!.getJSONObject(k), key : key )
-            if x != nil
+            if let x = Reply.getR(jo!.getJSONObject(k), key: key)
             {
                 return x
             }
@@ -146,5 +173,36 @@ public class Reply
     internal func getStringR(key : String) -> String?
     {
         return Reply.getR(self, key: key) as? String
+    }
+    
+    /**
+     Recursively search this Reply for a String, and return a String (if any) for the first instance of it.
+     - parameters:
+        - key: The key to look for
+     - returns: A JSONArray, or nil if the key with a JSONArray doesn't exist.
+    */
+    internal func getJSONArrayR(key : String) -> [AnyObject]?
+    {
+        return Reply.getR(self, key : key) as? [AnyObject]
+    }
+    
+    /**
+     Checks if an error was returned by the server in this Reply.
+     - returns: True if there was an error.
+    */
+    public func hasError() -> Bool
+    {
+        return errcode != nil
+    }
+    
+    /**
+     Determines if this Reply's result code matches the specified code.
+     - parameters:
+        - code: The code to check against this Reply's result code.
+     - returns: True if the specified code matches this Reply's result code.
+    */
+    public func resultIs(code : String) -> Bool
+    {
+        return code == result
     }
 }

@@ -34,18 +34,32 @@ public class Wiki
         Auth.doAuth(self)
     }
     
+    /**
+     Edits a page
+     - parameters:
+        - title: The title to edit
+        - text: The text to set the page to
+        - summary: The edit summary to use
+     - returns: True on success
+    */
     public func edit(title : String, text : String, summary : String) -> Bool
     {
         
-        let ub = self.makeUB("edit")
+        let ub = makeUB("edit")
         Req.post(ub.makeURL(), cookiejar: cookiejar, contenttype: Req.urlenc, text: URLBuilder.chainParams(FString.massEnc("title", title, "appendtext", text, "summary", summary, "token", token)))
         
-        
+        // TODO: Should return correct success value
         return true
     }
     
-    
-    internal func makeUB(action : String, params : (String, String)...) -> URLBuilder
+    /**
+     Creates a template URLBuilder with a custom action &amp; params. PRECONDITION: <code>params</code> must be URLEncoded.
+     - parameters:
+        - action: The action to use
+        - params: The params to use.
+     - returns: The template URLBuilder
+    */
+    internal func makeUB(action : String, params : String...) -> URLBuilder
     {
         let ub = URLBuilder(upx.2, action: action)
         ub.setParams(params)
