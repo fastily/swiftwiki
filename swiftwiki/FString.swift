@@ -4,17 +4,17 @@ import Foundation
  Miscellaneous String related routines I find myself using repeatedly.
  - author: Fastily
 */
-public class FString
+open class FString
 {
     /**
      Denotes charset to % escape in data/URLs sent to sever
     */
-    private static let escapeCharSet = NSCharacterSet(charactersInString: "/%&=?$#+-~@<>|\\*,.()[]{}^!").invertedSet
+    fileprivate static let escapeCharSet = CharacterSet(charactersIn: "/%&=?$#+-~@<>|\\*,.()[]{}^!").inverted
     
     /**
      No initializers allowed
     */
-    private init()
+    fileprivate init()
     {
         
     }
@@ -25,9 +25,9 @@ public class FString
         - s: The String to encode
      - returns: The URL-encoded string
     */
-    public class func enc(s : String) -> String
+    open class func enc(_ s : String) -> String
     {
-        return s.stringByAddingPercentEncodingWithAllowedCharacters(FString.escapeCharSet)!
+        return s.addingPercentEncoding(withAllowedCharacters: FString.escapeCharSet)!
     }
     
     /**
@@ -36,7 +36,7 @@ public class FString
         - items: The Strings to encode
      - returns: The list of encoded Strings, in the same order they were passed in.
     */
-    public class func massEnc(items: String...) -> [String]
+    open class func massEnc(_ items: String...) -> [String]
     {
         var x = [String]()
         for item in items

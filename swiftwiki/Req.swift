@@ -3,25 +3,25 @@ import Foundation
 /**
  The internal semaphore that makes synchronous network calls possible for this file
 */
-private var sem = dispatch_semaphore_create(0)
+private var sem = DispatchSemaphore(value: 0)
 
 /**
   Class with static methods that make network calls
  
  - author: Fastily
  */
-public class Req
+open class Req
 {
     
     /**
      Content encoding to use for URLEncoded forms.
     */
-    public static let urlenc = "application/x-www-form-urlencoded"
+    open static let urlenc = "application/x-www-form-urlencoded"
     
     /**
      Initializers not allowed
     */
-    private init()
+    fileprivate init()
     {
         
     }
@@ -33,9 +33,9 @@ public class Req
         - url: The URL the reply was recieved from
         - cookiejar: The cookiejar to apply (if applicable) new cookies to
     */
-    private class func grabCookies(response : NSHTTPURLResponse, url : NSURL, cookiejar : CookieManager)
+    fileprivate class func grabCookies(_ response : HTTPURLResponse, url : URL, cookiejar : CookieManager)
     {
-        cookiejar.add(url.host!, cookies: NSHTTPCookie.cookiesWithResponseHeaderFields((response.allHeaderFields as? [String : String])!, forURL: response.URL!))
+        cookiejar.add(url.host!, cookies: HTTPCookie.cookies(withResponseHeaderFields: (response.allHeaderFields as? [String : String])!, for: response.url!))
     }
     
     
@@ -47,9 +47,9 @@ public class Req
      - returns: An NSMUtableRequest with the specified parameters.
     
     */
-    private class func makeGenericURLRequest(url : NSURL, cookiejar : CookieManager?) -> NSMutableURLRequest
+    fileprivate class func makeGenericURLRequest(_ url : URL, cookiejar : CookieManager?) -> NSMutableURLRequest
     {
-        let c = NSMutableURLRequest(URL: url)
+        let c = NSMutableURLRequest(url: url)
         c.addValue(Settings.useragent, forHTTPHeaderField: "User-Agent")
         c.addValue("keep-alive", forHTTPHeaderField: "Connection")
         
@@ -69,11 +69,11 @@ public class Req
         - contenttype: The contenttype header to use, set nil to disable
      - returns: An NSMUtableRequest with the specified parameters.
     */
-    private class func makePost(url : NSURL, cookiejar : CookieManager?, contenttype : String?) -> NSMutableURLRequest
+    fileprivate class func makePost(_ url : URL, cookiejar : CookieManager?, contenttype : String?) -> NSMutableURLRequest
     {
         let c = Req.makeGenericURLRequest(url, cookiejar: cookiejar)
         
-        c.HTTPMethod = "POST"
+        c.httpMethod = "POST"
         if contenttype != nil
         {
             c.addValue(contenttype!, forHTTPHeaderField: "Content-Type")
@@ -91,10 +91,10 @@ public class Req
         - text: The text to post
      - returns The reply from the server, or nil if something went wrong.
     */
-    public class func genericPOST(url : NSURL, cookiejar : CookieManager?, contenttype : String?, text : String) -> NSData?
+    open class func genericPOST(_ url : URL, cookiejar : CookieManager?, contenttype : String?, text : String) -> Data?
     {
         let c = Req.makePost(url, cookiejar: cookiejar, contenttype: contenttype)
-        c.HTTPBody = text.dataUsingEncoding(NSUTF8StringEncoding)
+        c.httpBody = text.data(using: String.Encoding.utf8)
         
         return Req.doReq(c, cookiejar: cookiejar)
     }
@@ -110,9 +110,9 @@ public class Req
         - text: The text to post
      - returns: A Reply object representing the reply from the server, or an empty Reply object if something went wrong.
     */
-    internal class func post(url : NSURL, cookiejar : CookieManager, contenttype: String?, text : String) -> Reply
+    internal class func post(_ url : URL, cookiejar : CookieManager, contenttype: String?, text : String) -> Reply
     {
-        return Reply(Req.genericPOST(url, cookiejar: cookiejar, contenttype: contenttype, text: text))
+        return Reply(Req.genericPOST(url, cookiejar: cookiejar, contenttype: contenttype, text: text) as! NSData)
     }
     
     /**
@@ -122,7 +122,7 @@ public class Req
         - cookiejar: The cookiejar to use.  Optional, set nil to disable
      - returns: NSData from the server, or nil if something went wrong
     */
-    public class func genericGET(url : NSURL, cookiejar : CookieManager?) -> NSData?
+    open class func genericGET(_ url : URL, cookiejar : CookieManager?) -> Data?
     {
         return Req.doReq(Req.makeGenericURLRequest(url, cookiejar: cookiejar), cookiejar: cookiejar)
     }
@@ -135,9 +135,9 @@ public class Req
         - cookiejar: The cookiejar to use
      - returns: A Reply from the server.
     */
-    internal class func get(url : NSURL, cookiejar: CookieManager) -> Reply
+    internal class func get(_ url : URL, cookiejar: CookieManager) -> Reply
     {
-        return Reply(Req.genericGET(url, cookiejar: cookiejar))
+        return Reply(Req.genericGET(url, cookiejar: cookiejar) as! NSData)
     }
     
     
@@ -149,22 +149,22 @@ public class Req
      - returns: The JSONObject reply from the server
     */
     
-    internal class func doReq(req: NSMutableURLRequest, cookiejar : CookieManager?) -> NSData?
+    internal class func doReq(_ req: NSMutableURLRequest, cookiejar : CookieManager?) -> Data?
     {
-        var reply : NSData?
-        NSURLSession.sharedSession().dataTaskWithRequest(req, completionHandler: { data, response, error in
+        var reply : Data?
+        URLSession.shared.dataTask(with: req, completionHandler: { data, response, error in
             
             if let cjar = cookiejar
             {
-                Req.grabCookies(response as! NSHTTPURLResponse, url: req.URL!, cookiejar: cjar)
+                Req.grabCookies(response as! HTTPURLResponse, url: req.url!, cookiejar: cjar)
             }
             
             reply = data
             
-            dispatch_semaphore_signal(sem)
+            sem.signal()
         }).resume()
         
-        dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER)
+        sem.wait(timeout: DispatchTime.distantFuture)
         
         return reply
     }

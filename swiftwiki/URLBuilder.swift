@@ -6,17 +6,17 @@ import Foundation
  
  - author: Fastily
 */
-public class URLBuilder
+open class URLBuilder
 {
     /**
      The base of the URL, constructed with the domain
     */
-    private var base : String
+    fileprivate var base : String
     
     /**
       The parameter list to append to the URL.
      */
-    private var pl  = [String:String]()
+    fileprivate var pl  = [String:String]()
     
     /**
      Initializer, takes the domain name we'll be working with.
@@ -37,7 +37,7 @@ public class URLBuilder
      - parameters:
         - params: The parameters, [key1, value1, key2, value2,...] to set object's state with.  PRECONDITION: params *must* contain an even number of elements
     */
-    internal func setParams(params : [String]) -> Void
+    internal func setParams(_ params : [String]) -> Void
     {
         for var i = 0; i < params.count; i+=2
         {
@@ -50,7 +50,7 @@ public class URLBuilder
      
      - returns: A URL based off the state of the object
     */
-    internal func makeURL() -> NSURL
+    internal func makeURL() -> URL
     {
         var x = [String]()
         
@@ -60,7 +60,7 @@ public class URLBuilder
             x.append(v)
         }
         
-        return NSURL(string: base + URLBuilder.chainParams(x))!
+        return URL(string: base + URLBuilder.chainParams(x))!
     }
     
     /**
@@ -70,7 +70,7 @@ public class URLBuilder
         - params: The array of parameters to chain.
      - returns: The chained properties as a String.
     */
-    internal class func chainParams(params : [String]) -> String
+    internal class func chainParams(_ params : [String]) -> String
     {
         var x = ""
         

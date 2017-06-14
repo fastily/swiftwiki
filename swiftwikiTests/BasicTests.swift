@@ -10,7 +10,7 @@ class BasicTests: XCTestCase
     /**
      The wiki object we'll be using
     */
-    private static var wiki : Wiki? = nil
+    fileprivate static var wiki : Wiki? = nil
     
     /**
      Intializes global Wiki object for BasicTests
@@ -20,7 +20,7 @@ class BasicTests: XCTestCase
         //Settings.debug = true
         do
         {
-            let upx = try String(contentsOfFile: ("~/Documents/.a.txt" as NSString).stringByExpandingTildeInPath, encoding: NSUTF8StringEncoding).componentsSeparatedByString(":")
+            let upx = try String(contentsOfFile: ("~/Documents/.a.txt" as NSString).expandingTildeInPath, encoding: String.Encoding.utf8).components(separatedBy: ":")
             wiki = Wiki(upx[0], px: upx[1], domain: "test.wikipedia.org")
             
             print("TOKEN IS -----> \(wiki!.token)")

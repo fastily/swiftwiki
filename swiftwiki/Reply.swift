@@ -5,34 +5,34 @@ import Foundation
  
  - author: Fastily
 */
-public class Reply
+open class Reply
 {
     /**
      Result strings which should not be tagged as errors.
     */
-    private static let whitelist = ["NeedToken", "Success", "Continue"]
+    fileprivate static let whitelist = ["NeedToken", "Success", "Continue"]
     
     /**
      The JSONObject backing this Reply wrapper
     */
-    private var base = [String : AnyObject]()
+    fileprivate var base = [String : AnyObject]()
     
     /**
      The result param of the query/action, if one was returned by the server.
     */
-    private var result : String?
+    fileprivate var result : String?
     
     /**
      The error code returned by the server, if one was returned.
     */
-    private var errcode: String?
+    fileprivate var errcode: String?
     
     /**
      Initializer, takes and interprets a JSON reply from the server.
     */
-    internal init(_ data : NSData?)
+    internal init(_ data : Data?)
     {
-        if let d = data, x = try? NSJSONSerialization.JSONObjectWithData(d, options:NSJSONReadingOptions.MutableContainers) as! [String : AnyObject]
+        if let d = data, let x = try? JSONSerialization.jsonObject(with: d, options:JSONSerialization.ReadingOptions.mutableContainers) as! [String : AnyObject]
         {
             base = x
             
@@ -62,7 +62,7 @@ public class Reply
         - _: The serialized JSON object returned from the server.
      
     */
-    private init(_ base : [String : AnyObject])
+    fileprivate init(_ base : [String : AnyObject])
     {
         self.base = base
     }
@@ -73,9 +73,9 @@ public class Reply
         - key: The key to search for
      - returns: The JSONObject, or nil if there is no value for the specified key
     */
-    internal func getJSONObject(key : String) -> Reply?
+    internal func getJSONObject(_ key : String) -> Reply?
     {
-        if let x = base[key], y = x as? [String :AnyObject]
+        if let x = base[key], let y = x as? [String :AnyObject]
         {
             return Reply(y)
         }
@@ -88,9 +88,9 @@ public class Reply
         - key: The key to search for
      - returns: The String, or nil if there was no value for the specified key
     */
-    internal func getString(key : String) -> String?
+    internal func getString(_ key : String) -> String?
     {
-        if let x = base[key], y = x as? String
+        if let x = base[key], let y = x as? String
         {
             return y
         }
@@ -103,9 +103,9 @@ public class Reply
         - key: The key to search for
      - returns: The JSONARray, or nil if there was no value for the specified key
     */
-    internal func getJSONArray(key : String) -> [AnyObject]?
+    internal func getJSONArray(_ key : String) -> [AnyObject]?
     {
-        if let x = base[key], y = x as? [AnyObject]
+        if let x = base[key], let y = x as? [AnyObject]
         {
             return y
         }
@@ -119,7 +119,7 @@ public class Reply
         - key: The key to search for
      - returns: True if we found a given key in this JSONObject
     */
-    internal func has(key : String) -> Bool
+    internal func has(_ key : String) -> Bool
     {
         return base.keys.contains(key)
     }
@@ -131,7 +131,7 @@ public class Reply
         - key: The key to look for
      - returns: The first AnyObject associated with the specified key, or nil if we didn't find the key.
     */
-    private class func getR(jo : Reply?, key : String) -> AnyObject?
+    fileprivate class func getR(_ jo : Reply?, key : String) -> AnyObject?
     {
         if jo == nil //base case
         {
@@ -159,7 +159,7 @@ public class Reply
         - key: The key to look for.
      - returns: A JSONObject, or nil if the key with a JSONObject doesn't exist.
     */
-    internal func getJSONObjectR(key : String) -> Reply?
+    internal func getJSONObjectR(_ key : String) -> Reply?
     {
         return Reply.getR(self, key: key) as? Reply
     }
@@ -170,7 +170,7 @@ public class Reply
         - key: The key to look for
      - returns: A String, or nil if the key with a String doesn't exist.
     */
-    internal func getStringR(key : String) -> String?
+    internal func getStringR(_ key : String) -> String?
     {
         return Reply.getR(self, key: key) as? String
     }
@@ -181,7 +181,7 @@ public class Reply
         - key: The key to look for
      - returns: A JSONArray, or nil if the key with a JSONArray doesn't exist.
     */
-    internal func getJSONArrayR(key : String) -> [AnyObject]?
+    internal func getJSONArrayR(_ key : String) -> [AnyObject]?
     {
         return Reply.getR(self, key : key) as? [AnyObject]
     }
@@ -190,7 +190,7 @@ public class Reply
      Checks if an error was returned by the server in this Reply.
      - returns: True if there was an error.
     */
-    public func hasError() -> Bool
+    open func hasError() -> Bool
     {
         return errcode != nil
     }
@@ -201,7 +201,7 @@ public class Reply
         - code: The code to check against this Reply's result code.
      - returns: True if the specified code matches this Reply's result code.
     */
-    public func resultIs(code : String) -> Bool
+    open func resultIs(_ code : String) -> Bool
     {
         return code == result
     }

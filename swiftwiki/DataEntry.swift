@@ -1,6 +1,6 @@
 import Foundation
 
-public class DataEntry
+open class DataEntry
 {
     
 }

@@ -4,7 +4,7 @@ import Foundation
  CookieManager which manages cookies for each Wiki instance
  - author: Fastily
 */
-public class CookieManager
+open class CookieManager
 {
     /**
      The backing data structure for the cookie manager.  Scheme: [domain : [name : value]]
@@ -25,7 +25,7 @@ public class CookieManager
         - domain: The domain (in shorthand: e.g. 'commons.wikimedia.org') where these cookies were returned from
         - cookies: The list of cookies to add to this cookiejar.  Note that `domain` will be ignored
     */
-    internal func add(domain : String, cookies : [NSHTTPCookie])
+    internal func add(_ domain : String, cookies : [HTTPCookie])
     {
         if !self.hasDomain(domain)
         {
@@ -44,7 +44,7 @@ public class CookieManager
         - domain: The domain to check
      - returns: True if the domain exists for this CookieManager.
     */
-    internal func hasDomain(domain : String) -> Bool
+    internal func hasDomain(_ domain : String) -> Bool
     {
         return base[domain] != nil
     }
@@ -56,7 +56,7 @@ public class CookieManager
         - domain: The domain to fetch the cookie string for
      - returns: The cookies as a String
     */
-    internal func getCookieString(domain : String) -> String
+    internal func getCookieString(_ domain : String) -> String
     {
         var x = ""
         

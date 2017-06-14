@@ -9,7 +9,7 @@ internal class Auth
     /**
      Initializers disallowed
     */
-    private init()
+    fileprivate init()
     {
         
     }
@@ -20,7 +20,7 @@ internal class Auth
         - wiki: The wiki object to use
      - returns: True on success.
     */
-    private class func login(wiki : Wiki) -> Bool
+    fileprivate class func login(_ wiki : Wiki) -> Bool
     {
         let ub = wiki.makeUB("login")
         
@@ -43,7 +43,7 @@ internal class Auth
      - returns: True on success.
      
     */
-    private class func doSetup(wiki : Wiki) -> Bool
+    fileprivate class func doSetup(_ wiki : Wiki) -> Bool
     {
         let r = Req.get(wiki.makeUB("query", params: "meta", "tokens", "type", "csrf").makeURL(), cookiejar: wiki.cookiejar)
         
@@ -61,7 +61,7 @@ internal class Auth
         - wiki: The wiki object to use
      - returns: True on success.
     */
-    internal class func doAuth(wiki: Wiki) -> Bool
+    internal class func doAuth(_ wiki: Wiki) -> Bool
     {
         return login(wiki) && doSetup(wiki)
     }

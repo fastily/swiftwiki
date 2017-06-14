@@ -4,7 +4,7 @@ import Foundation
  Main class for swiftwiki.  Most users will only need this class.
  - author: Fastily
 */
-public class Wiki
+open class Wiki
 {
     /**
      The internal cookie manager for this object
@@ -42,7 +42,7 @@ public class Wiki
         - summary: The edit summary to use
      - returns: True on success
     */
-    public func edit(title : String, text : String, summary : String) -> Bool
+    open func edit(_ title : String, text : String, summary : String) -> Bool
     {
         
         let ub = makeUB("edit")
@@ -59,7 +59,7 @@ public class Wiki
         - params: The params to use.
      - returns: The template URLBuilder
     */
-    internal func makeUB(action : String, params : String...) -> URLBuilder
+    internal func makeUB(_ action : String, params : String...) -> URLBuilder
     {
         let ub = URLBuilder(upx.2, action: action)
         ub.setParams(params)
